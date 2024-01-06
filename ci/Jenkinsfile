@@ -7,10 +7,29 @@ pipeline {
     }
   }
   stages {
-    stage('Run Node') {
+    stage('Check') {
       steps {
         container('node') {
           sh 'npm version'
+        }
+      }
+    }
+    stage('Build') {
+      steps {
+        container('node') {
+          sh 'npm install'
+        }
+      }
+    }
+
+    stage('Publish') {
+      steps {
+        withCredentials([string(credentialsId: 'npm-access', variable: 'npm-access')]) {
+            container('node') {
+                sh "echo $npm-access > .npmrc"
+                sh 'npm version minor'
+                sh 'npm publish'
+            }
         }
       }
     }
