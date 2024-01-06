@@ -1,0 +1,24 @@
+pipeline {
+  agent {
+    kubernetes {
+      label "jenkins-pod-agent"
+      defaultContainer("jnlp")
+      yamlFile 'ci/pod.yaml'
+    }
+  }
+  stages {
+    stage('Run Node') {
+      steps {
+        container('node') {
+          sh 'npm version'
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+        cleanWs()
+    }
+  }
+}
