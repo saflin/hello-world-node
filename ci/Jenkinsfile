@@ -26,7 +26,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'npm-access', variable: 'npm-access')]) {
             container('node') {
-                sh "echo \$npm-access > .npmrc"
+                sh "echo \${npm-access} > .npmrc"
                 sh "cat .npmrc"
                 sh 'npm version minor'
                 sh 'npm publish --registry http://35.197.217.72:8081/repository/npm-private'
