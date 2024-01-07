@@ -1,16 +1,34 @@
+import org.jenkinsci.plugins.pipeline.modeldefinition.when.impl.ChangeSetConditional
+import java.util.ArrayList
+
 @NonCPS
-def String getChangedFileList() {
-  changedFiles = []
+def boolean hasSourceFilesChanged(String[] filePatterns) {
+  if(filePatterns.length == 0){
+      return false
+  }
+  patternList = new ArrayList<ChangeSetConditional>()
+  for(pattern in filePatterns){
+    patternList.add(new ChangeSetConditional(pattern))
+  }
   for (changeLogSet in currentBuild.changeSets) {
     for (entry in changeLogSet.getItems()) {
-       for(file in entry.getAffectedFiles()) {
-          changedFiles.add(file.getPath())  
-       }     
+      for(conditionalPattern in patternList){
+        if (conditionalPattern.changeSetMatches(entry, conditionalPattern.getPattern(), false)) {
+            return true;
+        }
+      }        
     }
   }
+  return false
 }
 
-def call() {
+def call(String[] changeSetPatterns= []) {
+  String[] filePatterns
+  if(changeSetPatterns.length == 0) {
+    filePatterns = ["**/src/*.js"]
+  }else {
+    filePatterns = changeSetPatterns
+  }
     pipeline {
       agent {
         kubernetes {
@@ -52,7 +70,13 @@ def call() {
         }
 
         stage('Publish') {
-          when { branch 'master' }
+          when { 
+            allof {  
+              branch 'master'
+              expression { hasSourceFilesChanged(filePatterns)} 
+            }
+          }
+
           steps {
             withCredentials([file(credentialsId: 'npm-access-file', variable: 'npmauth'),
             usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
