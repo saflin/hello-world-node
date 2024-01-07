@@ -24,7 +24,7 @@ pipeline {
 
     stage('Publish') {
       steps {
-        withCredentials([string(credentialsId: 'npm-access', variable: 'npmauth')]) {
+        withCredentials([string(credentialsId: 'npm-access-file', variable: 'npmauth')]) {
             container('node') {
                 sh '''
                     set +x
