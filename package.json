@@ -1,6 +1,6 @@
 {
   "name": "hello-world-node",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "hello world application in NodeJS",
   "main": "index.js",
   "scripts": {
