@@ -30,6 +30,8 @@ pipeline {
                 sh '''
                     apt update && apt install -y git
                     git config --global safe.directory $WORKSPACE
+                    git config --global user.email "saflin.ph@gmail.com"
+                    git config --global user.name "Saflin Hussain"
                     cat $npmauth > .npmrc
                    ''' 
                 sh 'npm version minor'
