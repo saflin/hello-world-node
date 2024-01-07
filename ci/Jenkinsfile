@@ -71,7 +71,7 @@ def call(String[] changeSetPatterns= []) {
 
         stage('Publish') {
           when { 
-            allof {  
+            allOf {  
               branch 'master'
               expression { hasSourceFilesChanged(filePatterns)} 
             }
