@@ -9,6 +9,6 @@ spec:
   - name: node
     image: node:20.5-buster-slim
     command:
-    - apt update && apt install -y git && cat
+    - cat
     tty: true
 

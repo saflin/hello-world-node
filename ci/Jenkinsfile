@@ -28,6 +28,7 @@ pipeline {
         usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
             container('node') {
                 sh '''
+                    apt update && apt install -y git
                     cat $npmauth > .npmrc
                    ''' 
                 sh 'npm version minor'
