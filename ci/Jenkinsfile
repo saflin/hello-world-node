@@ -1,3 +1,15 @@
+@NonCPS
+def String getChangedFileList() {
+  changedFiles = []
+  for (changeLogSet in currentBuild.changeSets) {
+    for (entry in changeLogSet.getItems()) {
+       for(file in entry.getAffectedFiles()) {
+          changedFiles.add(file.getPath())  
+       }     
+    }
+  }
+}
+
 pipeline {
   agent {
     kubernetes {
@@ -23,16 +35,19 @@ pipeline {
     }
 
     stage('Publish') {
+      when { branch 'master' }
       steps {
-        withCredentials([file(credentialsId: 'npm-access-file', variable: 'npmauth'),
-        usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+        withCredentials([file(credentialsId: 'npm-access-file', variable: 'npmauth')]) {
             container('node') {
+                script {
+                    println getChangedFileList()
+                }
                 sh '''
                     apt update && apt install -y git
                     git config --global safe.directory $WORKSPACE
                     git config --global user.email "saflin.ph@gmail.com"
                     git config --global user.name "Saflin Hussain"
-                    git branch
+                    git checkout -b 
                     cat $npmauth > .npmrc
                    ''' 
                 sh 'npm version minor'
