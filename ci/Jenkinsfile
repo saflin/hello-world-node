@@ -29,6 +29,7 @@ pipeline {
             container('node') {
                 sh '''
                     apt update && apt install -y git
+                    git config --global safe.directory $WORKSPACE
                     cat $npmauth > .npmrc
                    ''' 
                 sh 'npm version minor'
