@@ -37,7 +37,8 @@ pipeline {
     stage('Publish') {
       when { branch 'master' }
       steps {
-        withCredentials([file(credentialsId: 'npm-access-file', variable: 'npmauth')]) {
+        withCredentials([file(credentialsId: 'npm-access-file', variable: 'npmauth'),
+        usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
             container('node') {
                 script {
                     def changeLogSets = currentBuild.changeSets
@@ -59,7 +60,8 @@ pipeline {
                     apt update && apt install -y git
                     git config --global safe.directory $WORKSPACE
                     git config --global user.email "saflin.ph@gmail.com"
-                    git config --global user.name "Saflin Hussain"
+                    git config --global user.name "${GIT_USERNAME}"
+                    git config --global user.password "${GIT_TOKEN}"
                     git checkout -b master origin/master
                     cat $npmauth > .npmrc
                    ''' 
