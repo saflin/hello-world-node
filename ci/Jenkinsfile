@@ -60,7 +60,7 @@ pipeline {
                     git config --global safe.directory $WORKSPACE
                     git config --global user.email "saflin.ph@gmail.com"
                     git config --global user.name "Saflin Hussain"
-                    git checkout -b origin master
+                    git checkout -b master origin/master
                     cat $npmauth > .npmrc
                    ''' 
                 sh 'npm version minor'
