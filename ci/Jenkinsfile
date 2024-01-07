@@ -28,7 +28,9 @@ pipeline {
         usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
             container('node') {
                 sh '''
-                    export $WORKSPACE/.npmrc
+                    export NPM_RC_PATH=$WORKSPACE/.npmrc
+                    ls -al
+                    cat $WORKSPACE/.npmrc
                     npm install -g npm-cli-login
                     npm-cli-login -u $USERNAME -p $PASSWORD -e admin@example.org -r http://35.197.217.72:8081/repository/npm-private/
                    '''
